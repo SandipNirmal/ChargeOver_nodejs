@@ -1,2 +1,2 @@
 # ChargeOver_nodejs
-ChargeOver nodes API
+ChargeOver nodejs API
