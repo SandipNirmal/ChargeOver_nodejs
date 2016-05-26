@@ -1,0 +1,28 @@
+{
+  "name": "chargeover_nodejs",
+  "version": "0.0.1",
+  "description": "Nodejs library for ChargeOver recurring billing platform.",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SandipNirmal/ChargeOver_nodejs.git"
+  },
+  "keywords": [
+    "chargeover",
+    "billing"
+  ],
+  "author": "Sandip Nirmal",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/SandipNirmal/ChargeOver_nodejs/issues"
+  },
+  "homepage": "https://github.com/SandipNirmal/ChargeOver_nodejs#readme",
+  "dependencies": {
+    "crypto-js": "^3.1.6",
+    "https": "^1.0.0",
+    "q": "^1.4.1",
+    "bl": "^1.1.2"
+  }
+}
