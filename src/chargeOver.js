@@ -3,6 +3,7 @@
  *	@author Sandip Nirmal
  */
 
+
 // Add required depandancies
 var https = require('https');
 var crypto = require('crypto-js');
@@ -12,7 +13,7 @@ var bl = require('bl');
 // Username/public_key for chargeover
 var user,
     // Password/private_key for ChargeOver
-    passwod,
+    password,
     // Boolean value for authentication type. (basic_auth / COv1)
     basic_auth,
     // Your company Endpoint Url for accessing ChargeOver
@@ -21,7 +22,8 @@ var user,
 // Expose methods publicly
 module.exports = {
     setOptions: setChargeOverOptions,
-    createItem: createItem
+    createItem: createItem,
+    getItems: listItems
 };
 
 
@@ -34,7 +36,7 @@ function setChargeOverOptions(user, pass, basic_auth, endpoint) {
     'use strict';
 
     user = user;
-    passwod = pass;
+    password = pass;
     basic_auth = basic_auth;
     chargrOver_endpoint = endpoint;
 }
@@ -76,8 +78,8 @@ function _prepareChargeOverRequest(type, url, data) {
 function _buildBasicAuthToken() {
     'use strict';
 
-    var authString = CryptoJS.enc.Utf8.parse(user + ':' + password);
-    return 'Basic ' + CryptoJS.enc.Base64.stringify(authString);
+    var authString = crypto.enc.Utf8.parse(user + ':' + password);
+    return 'Basic ' + crypto.enc.Base64.stringify(authString);
 }
 
 /**
@@ -148,7 +150,7 @@ function _randomString(length) {
 function _getHMACSignature(msg, privateKey) {
     'use strict';
 
-    return CryptoJS.enc.Hex.stringify(CryptoJS.HmacSHA256(msg, privateKey));
+    return crypto.enc.Hex.stringify(crypto.HmacSHA256(msg, privateKey));
 }
 
 /**
@@ -183,7 +185,8 @@ function createItem(args) {
         }
     };
 
-    var createItemRequest = _makeAuthSignature('POST', '/api/v3/item', postData);
+    var createItemRequest = _prepareChargeOverRequest('POST',
+    																							'/api/v3/item', postData);
 
     var httpReq = https.request(options, function(res) {
     	'use strict';
@@ -204,7 +207,7 @@ function createItem(args) {
           deferred.reject({'statusCode': 500,
             'res': { 'status': 'Internal Server Error!'}});
         }
-      }
+      }));
     });
 
     httpReq.write(JSON.stringify(postData));
@@ -215,5 +218,166 @@ function createItem(args) {
     });
 
     return deferred.promise;
+}
+
+/**
+ * Returns list of all items available on ChargeOver
+ * @return {Object | Promise}
+ */
+function listItems() {
+    'use strict';
+
+    var deferred = Q.defer();
+    var options = _prepareChargeOverRequest('GET', '/api/v3/item', null);
+
+    var httpReq = https.request(options, function(res) {
+    	'use strict';
+
+        res.pipe(bl(function(err, body) {
+            if (!err) {
+                var bodyObj = JSON.parse(body);
+                if ((bodyObj.status).toLowerCase() === 'error') {
+                    deferred.reject({
+                        'statusCode': 400,
+                        'res': { 'status': bodyObj.message }
+                    });
+                } else {
+                    deferred.resolve(bodyObj.response);
+                }
+            } else {
+                deferred.reject({
+                    'statusCode': 500,
+                    'res': { 'status': 'Internal Server Error!' }
+                });
+            }
+        }));
+    });
+
+    httpReq.end();
+
+    httpReq.on('error', function(err) {
+        console.log('Error fetching items from ChargeOver ' + err);
+    });
+    return deferred.promise;
+}
+
+/**
+ * Creates new customer on ChargeOver
+ * @return {Object | promise}
+ */
+function createCustomer() {
+    'use strict';
+
+    console.log('Methot not imeplementated');
+}
+
+/**
+ * Returns customer details from ChargeOver
+ * @return {Object | promise}
+ */
+function getCustomer() {
+    'use strict';
+
+    console.log('Methot not imeplementated');
+}
+
+/**
+ * Updates customer details on ChargeOver
+ * @return {Object | promise}
+ */
+function updateCustomer() {
+    'use strict';
+
+    console.log('Methot not imeplementated');
+}
+
+/**
+ * Creates new recurring subscription for customer on ChargeOver
+ * @return {Object | promise}
+ */
+function createSubscription() {
+    'use strict';
+
+    console.log('Methot not imeplementated');
+}
+
+/**
+ * Returns subscription detailsfrom ChargeOver
+ * @return {Object | promise}
+ */
+function getSubscription() {
+    'use strict';
+
+    console.log('Methot not imeplementated');
+}
+
+/**
+ * Cancels recurring subscription from ChargeOver
+ * @return {Object | promise}
+ */
+function cancelSusbscription() {
+    'use strict';
+
+    console.log('Methot not imeplementated');
+}
+
+/**
+ * Create new invoice for subscription
+ * @return {Object | promise}
+ */
+function createInvoice() {
+    'use strict';
+
+    console.log('Methot not imeplementated');
+}
+
+/**
+ * Returns invoice details from ChargeOver
+ * @return {Object | promise}
+ */
+function getInvoice() {
+    'use strict';
+
+    console.log('Methot not imeplementated');
+}
+
+/**
+ * Mark Invoice void
+ * @return {Object | promise}
+ */
+function voidInvoice() {
+    'use strict';
+
+    console.log('Methot not imeplementated');
+}
+
+/**
+ * Create new transaction on ChargeOver for recurring subscription
+ * @return {Object | promise}
+ */
+function createNewTranasaction() {
+    'use strict';
+
+    console.log('Methot not imeplementated');
+}
+
+/**
+ * Returns transaction details from ChargeOver
+ * @return {Object | promise}
+ */
+function getTransaction() {
+    'use strict';
+
+    console.log('Methot not imeplementated');
+}
+
+/**
+ * Issue refund for transaction
+ * @return {Object | promise}
+ */
+function refundTransaction() {
+    'use strict';
+
+    console.log('Methot not imeplementated');
 }
 
